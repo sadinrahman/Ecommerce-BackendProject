@@ -8,6 +8,9 @@ namespace BackendProject.AppdbContext
 		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 		public DbSet<User> users { get; set; }
 		public DbSet<Product> products { get; set; }
+		public DbSet<Category> Category { get; set; }
+		public DbSet<Cart>	carts { get; set; }
+		public DbSet<CartItems> cartItems { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<User>()
@@ -26,6 +29,21 @@ namespace BackendProject.AppdbContext
 			modelBuilder.Entity<Category>().HasData(
 				new Category { CategoryId=1,Name="HotWheels"}
 				);
+			//var salt = BCrypt.Net.BCrypt.GenerateSalt();
+			//modelBuilder.Entity<User>().HasData(new User { Id=18, UserName = "admin", Email = "admin@gmail.com", Role = "Admin", Password = BCrypt.Net.BCrypt.HashPassword("password", salt) });
+			modelBuilder.Entity<User>()
+				.HasOne(x => x.Cart)
+				.WithOne(y => y.User)
+				.HasForeignKey<Cart>(x => x.UserId);
+			modelBuilder.Entity<Cart>()
+				.HasMany(q => q.cartitems)
+				.WithOne(w => w.Cart)
+				.HasForeignKey(i => i.CartId);
+			modelBuilder.Entity<CartItems>()
+				.HasOne(f=>f.Product)
+				.WithMany(o=>o.CartItems)
+				.HasForeignKey(i => i.ProductId);
+
 		}
 	}
 }

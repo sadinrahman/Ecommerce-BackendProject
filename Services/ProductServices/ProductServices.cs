@@ -2,6 +2,7 @@
 using BackendProject.AppdbContext;
 using BackendProject.Dto;
 using BackendProject.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BackendProject.Services.ProductServices
@@ -77,7 +78,7 @@ namespace BackendProject.Services.ProductServices
 			}
 			return products;
 		}
-		public async Task<bool> AddProduct(AddProductDto addProduct)
+		public async Task<bool> AddProduct( AddProductDto addProduct)
 		{
 			try
 			{
@@ -106,6 +107,34 @@ namespace BackendProject.Services.ProductServices
 			await _Context.SaveChangesAsync();
 			return true;
 		}
-		
+		public async Task<bool> EditProduct(int id,AddProductDto editproduct)
+		{
+			var exproduct= await _Context.products.FirstOrDefaultAsync(x=>x.ProductId==id);
+			var catexist=await _Context.Category.FirstOrDefaultAsync(x=>x.CategoryId==editproduct.CategoryId);
+			if (catexist == null)
+			{
+				throw new Exception("There is no category in this id");
+			}
+			if(exproduct == null)
+			{
+				return false;
+			}
+			try
+			{
+				exproduct.Title = editproduct.Title;
+				exproduct.Description = editproduct.Description;
+				exproduct.Price = editproduct.Price;
+				exproduct.Image = editproduct.Image;
+				exproduct.stock = editproduct.stock;
+				exproduct.CategoryId = editproduct.CategoryId;
+				_Context.products.Update(exproduct);
+				await _Context.SaveChangesAsync();
+				return true;
+			}catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+				
+			}
+		}
 	}
 }

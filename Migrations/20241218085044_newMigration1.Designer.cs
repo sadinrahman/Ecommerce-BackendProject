@@ -3,6 +3,7 @@ using BackendProject.AppdbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackendProject.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241218085044_newMigration1")]
+    partial class newMigration1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,6 +173,16 @@ namespace BackendProject.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 18,
+                            Email = "admin@gmail.com",
+                            Password = "$2a$11$xYQK49W1KNnqGMVuT328aewZ2sAl6xnP3w/Loo/FSPZiYHmTlkDaS",
+                            Role = "Admin",
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("BackendProject.Models.Cart", b =>

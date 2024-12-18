@@ -7,6 +7,6 @@ namespace BackendProject.Models
 		public int CategoryId { get; set; }
 		[Required]
 		public string? Name { get; set; }
-		public ICollection<Product> products { get; set; }
+		public ICollection<Product>? products { get; set; }
 	}
 }

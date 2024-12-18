@@ -9,5 +9,6 @@ namespace BackendProject.Services.ProductServices
 		Task<List<Productviewdto>> GetProductsByCategory(string category);
 		Task<bool> AddProduct(AddProductDto addProductDto);
 		Task<bool> DeleteProduct(int id);
+		Task<bool> EditProduct(int id,AddProductDto editproduct);
 	}
 }

@@ -15,10 +15,12 @@ namespace BackendProject.Models
 		[RegularExpression(@"^(?=.[A-Za-z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%*?&]{8,}$",
 		 ErrorMessage = "Password must contain at least one letter, one number, and one special character.")]
 		public string? Password { get; set; }
-		[Required]
+		
 		[Compare("Password",ErrorMessage = "password and confirmation password do not match.")]
 		public string? ConformPassword { get; set; }
-		public string Role { get; set; }
+		public string? Role { get; set; }
+		public Cart? Cart { get; set; }
+
 
 	}
 }

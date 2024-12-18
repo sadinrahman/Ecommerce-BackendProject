@@ -3,6 +3,7 @@ using BackendProject.Services.ProductServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace BackendProject.Controllers
 {
@@ -16,7 +17,7 @@ namespace BackendProject.Controllers
 			_services = services;
 		}
 		[HttpGet]
-		[Authorize]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> GetProduct()
 		{
 			var products=await _services.GetAllProducts();
@@ -46,7 +47,7 @@ namespace BackendProject.Controllers
 		}
 		[HttpPost]
 		[Authorize]
-		public async Task<IActionResult> addProduct(AddProductDto addproduct)
+		public async Task<IActionResult> addProduct( AddProductDto addproduct)
 		{
 			if (addproduct == null)
 			{
@@ -55,7 +56,7 @@ namespace BackendProject.Controllers
 			bool product=await _services.AddProduct(addproduct);
 			if (product)
 			{
-					return Ok(product);
+				return Ok("Product added successfully");
 			}
 			return BadRequest();
 		}
@@ -68,6 +69,17 @@ namespace BackendProject.Controllers
 				return Ok("deleted successfully");
 			}
 			return NotFound("there is no product in this given id");
+		}
+		[HttpPut("Edit/{id}")]
+		
+		public async Task<IActionResult> EditProduct(int id,AddProductDto addproduct)
+		{
+			bool update=await _services.EditProduct(id, addproduct);
+			if (!update)
+			{
+				return BadRequest();
+			}
+			return Ok("Product Updated successfully ");
 		}
 	}
 }
