@@ -93,7 +93,6 @@ namespace BackendProject.Services.ProductServices
 			catch(Exception ex)
 			{
 				throw new Exception(ex.Message);
-				Console.WriteLine($"Inner Exception: {ex.InnerException?.Message}");
 			}
 		}
 		public async Task<bool> DeleteProduct(int id)
