@@ -60,7 +60,7 @@ namespace BackendProject.AppdbContext
 				.WithMany(o=>o.Orders)
 				.HasForeignKey(e => e.UserId);
 			modelBuilder.Entity<OrderItems>()
-				.HasOne(p => p.order)
+				.HasOne(p => p.Order)
 				.WithMany(c => c.OrderItems)
 				.HasForeignKey(d => d.OrderId);
 			modelBuilder.Entity<OrderItems>()
