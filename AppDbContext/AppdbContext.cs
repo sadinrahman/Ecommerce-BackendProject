@@ -5,15 +5,20 @@ namespace BackendProject.AppdbContext
 {
 	public class AppDbContext:DbContext
 	{
-		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+		public AppDbContext(DbContextOptions<AppDbContext> options) : base	(options) { }
 		public DbSet<User> users { get; set; }
 		public DbSet<Product> products { get; set; }
 		public DbSet<Category> Category { get; set; }
 		public DbSet<Cart>	carts { get; set; }
 		public DbSet<CartItems> cartItems { get; set; }
+		public DbSet<WishList> wishList { get; set; }
+
+		public DbSet<Order> Orders { get; set; }
+		public DbSet<OrderItems> OrderItems { get; set; }
+		public DbSet<Address> Addresses { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			modelBuilder.Entity<User>()
+			modelBuilder.Entity<User>()  
 				.Property(x => x.Role)
 				.HasDefaultValue("user");
 			modelBuilder.Entity<Category>()
@@ -29,8 +34,7 @@ namespace BackendProject.AppdbContext
 			modelBuilder.Entity<Category>().HasData(
 				new Category { CategoryId=1,Name="HotWheels"}
 				);
-			//var salt = BCrypt.Net.BCrypt.GenerateSalt();
-			//modelBuilder.Entity<User>().HasData(new User { Id=18, UserName = "admin", Email = "admin@gmail.com", Role = "Admin", Password = BCrypt.Net.BCrypt.HashPassword("password", salt) });
+			
 			modelBuilder.Entity<User>()
 				.HasOne(x => x.Cart)
 				.WithOne(y => y.User)
@@ -43,7 +47,35 @@ namespace BackendProject.AppdbContext
 				.HasOne(f=>f.Product)
 				.WithMany(o=>o.CartItems)
 				.HasForeignKey(i => i.ProductId);
-
+			modelBuilder.Entity<WishList>()
+				.HasOne(x => x.users)
+				.WithMany(w => w.WishList)
+				.HasForeignKey(e => e.UserId);
+			modelBuilder.Entity<WishList>()
+				.HasOne(x => x.products)
+				.WithMany()
+				.HasForeignKey(e => e.ProductId);
+			modelBuilder.Entity<Order>()
+				.HasOne(x=>x.User)
+				.WithMany(o=>o.Orders)
+				.HasForeignKey(e => e.UserId);
+			modelBuilder.Entity<OrderItems>()
+				.HasOne(p => p.order)
+				.WithMany(c => c.OrderItems)
+				.HasForeignKey(d => d.OrderId);
+			modelBuilder.Entity<OrderItems>()
+				.HasOne(x => x.Product)
+				.WithMany()
+				.HasForeignKey(p => p.productId);
+			modelBuilder.Entity<Address>()
+				.HasOne(a => a.User)
+				.WithMany(u => u.Addresses)
+				.HasForeignKey(u => u.UserId);
+			modelBuilder.Entity<Order>()
+				.HasOne(o => o.Address)
+				.WithMany(a => a.Orders)
+				.HasForeignKey(u => u.AddressId)
+				.OnDelete(DeleteBehavior.Restrict);
 		}
 	}
 }

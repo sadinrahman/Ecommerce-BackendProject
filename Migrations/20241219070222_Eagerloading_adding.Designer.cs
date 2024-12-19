@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackendProject.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241218084029_InitialCreate13")]
-    partial class InitialCreate13
+    [Migration("20241219070222_Eagerloading_adding")]
+    partial class Eagerloading_adding
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -173,16 +173,29 @@ namespace BackendProject.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("users");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 3,
-                            Email = "admin@gmail.com",
-                            Password = "$2a$11$gEVUCB/UoIurY/OdZ./B6O8rt7TsvHiaS3wBuUa6LkTV2xZ0i/LNC",
-                            Role = "Admin",
-                            UserName = "admin"
-                        });
+            modelBuilder.Entity("BackendProject.Models.WishList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("wishList");
                 });
 
             modelBuilder.Entity("BackendProject.Models.Cart", b =>
@@ -226,6 +239,25 @@ namespace BackendProject.Migrations
                     b.Navigation("category");
                 });
 
+            modelBuilder.Entity("BackendProject.Models.WishList", b =>
+                {
+                    b.HasOne("BackendProject.Models.Product", "products")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BackendProject.Models.User", "users")
+                        .WithMany("WishList")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("products");
+
+                    b.Navigation("users");
+                });
+
             modelBuilder.Entity("BackendProject.Models.Cart", b =>
                 {
                     b.Navigation("cartitems");
@@ -244,6 +276,8 @@ namespace BackendProject.Migrations
             modelBuilder.Entity("BackendProject.Models.User", b =>
                 {
                     b.Navigation("Cart");
+
+                    b.Navigation("WishList");
                 });
 #pragma warning restore 612, 618
         }

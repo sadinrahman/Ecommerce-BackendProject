@@ -19,7 +19,7 @@ namespace BackendProject.Models
 		public int stock { get; set; }
 		[Required]
 		public int CategoryId { get; set; }
-		public Category? category { get; set; }
-		public List<CartItems>? CartItems { get; set; }
+		public virtual Category? category { get; set; }
+		public virtual List<CartItems>? CartItems { get; set; }
 	}
 }

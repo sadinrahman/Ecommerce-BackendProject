@@ -172,6 +172,29 @@ namespace BackendProject.Migrations
                     b.ToTable("users");
                 });
 
+            modelBuilder.Entity("BackendProject.Models.WishList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("wishList");
+                });
+
             modelBuilder.Entity("BackendProject.Models.Cart", b =>
                 {
                     b.HasOne("BackendProject.Models.User", "User")
@@ -213,6 +236,25 @@ namespace BackendProject.Migrations
                     b.Navigation("category");
                 });
 
+            modelBuilder.Entity("BackendProject.Models.WishList", b =>
+                {
+                    b.HasOne("BackendProject.Models.Product", "products")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BackendProject.Models.User", "users")
+                        .WithMany("WishList")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("products");
+
+                    b.Navigation("users");
+                });
+
             modelBuilder.Entity("BackendProject.Models.Cart", b =>
                 {
                     b.Navigation("cartitems");
@@ -231,6 +273,8 @@ namespace BackendProject.Migrations
             modelBuilder.Entity("BackendProject.Models.User", b =>
                 {
                     b.Navigation("Cart");
+
+                    b.Navigation("WishList");
                 });
 #pragma warning restore 612, 618
         }

@@ -11,6 +11,7 @@ namespace BackendProject.Mapper
 			CreateMap<User, LoginDto>().ReverseMap();
 			CreateMap<User,RegisterDto>().ReverseMap();
 			CreateMap<AddProductDto, Product>().ReverseMap();
+			CreateMap<WishListDto, WishList>().ReverseMap();
 		}
 	}
 }

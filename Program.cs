@@ -1,7 +1,10 @@
 using BackendProject.AppdbContext;
 using BackendProject.Mapper;
+using BackendProject.MiddleWare;
+using BackendProject.Services.CartService;
 using BackendProject.Services.LoginService;
 using BackendProject.Services.ProductServices;
+using BackendProject.Services.WishListService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -11,8 +14,11 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddLogging();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IProductServices, ProductServices>();
+builder.Services.AddScoped<ICartService,CartService>();
+builder.Services.AddScoped<IWishListService, WishListService>();
 builder.Services.AddDbContext<AppDbContext>(Options=>
 Options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddAutoMapper(typeof(ProfileMapper));
@@ -84,7 +90,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseMiddleware<GetUserIdMiddleWare>();
 app.MapControllers();
 
 app.Run();

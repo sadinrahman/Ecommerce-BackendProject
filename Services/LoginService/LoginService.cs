@@ -10,13 +10,13 @@ using System.Text;
 
 namespace BackendProject.Services.LoginService
 {
-	public class LoginService: ILoginService
+	public class LoginService : ILoginService
 	{
 		private readonly AppDbContext _context;
 		private readonly IMapper _mapper;
 		private readonly ILogger<LoginService> _logger;
 		private readonly IConfiguration _configuration;
-		public LoginService(AppDbContext context,IMapper mapper, ILogger<LoginService> logger,IConfiguration configuration)
+		public LoginService(AppDbContext context, IMapper mapper, ILogger<LoginService> logger, IConfiguration configuration)
 		{
 			_context = context;
 			_mapper = mapper;
@@ -40,7 +40,7 @@ namespace BackendProject.Services.LoginService
 				newUser.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
 
 				var user = _mapper.Map<User>(newUser);
-                Console.WriteLine("hlo");
+				Console.WriteLine("hlo");
 				_context.users.Add(user);
 				await _context.SaveChangesAsync();
 				return true;
@@ -65,7 +65,7 @@ namespace BackendProject.Services.LoginService
 			{
 				_logger.LogInformation("Logging into the user");
 
-				var usr = await _context.users.FirstOrDefaultAsync(u => u.UserName== userdto.UserName);
+				var usr = await _context.users.FirstOrDefaultAsync(u => u.UserName == userdto.UserName);
 				if (usr == null)
 				{
 					_logger.LogWarning("user not found");
@@ -80,12 +80,6 @@ namespace BackendProject.Services.LoginService
 					_logger.LogWarning("invalid password");
 					return new resultDto { Error = "Invalid Password" };
 				}
-
-				//if (usr.IsBlocked)
-				//{
-				//	_logger.LogWarning("user is blocked");
-				//	return new resultDto { Error = "User Blocked" };
-				//}
 
 				_logger.LogInformation("generating token");
 				var token = GenerateToken(usr);
@@ -107,26 +101,33 @@ namespace BackendProject.Services.LoginService
 		}
 		public string GenerateToken(User user)
 		{
+
 			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
 			var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
 			var claims = new List<Claim>
+	{
+		new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), 
+        new Claim(ClaimTypes.Name, user.UserName), 
+        new Claim(ClaimTypes.Role, user.Role) 
+    };
+
+			var tokenDescriptor = new SecurityTokenDescriptor
 			{
-			new Claim(ClaimTypes.NameIdentifier, user.UserName),
-			new Claim(ClaimTypes.Name, user.UserName),
-			new Claim(ClaimTypes.Role, user.Role)
-		};
-			var token = new JwtSecurityToken(
-				issuer: _configuration["Jwt:Issuer"],
-				audience: _configuration["Jwt:Audience"],
-				claims: claims,
-				expires: DateTime.Now.AddHours(1),
-				signingCredentials: creds
-			);
-			return new JwtSecurityTokenHandler().WriteToken(token);
+				Subject = new ClaimsIdentity(claims),
+				Expires = DateTime.UtcNow.AddHours(1),
+				Issuer = "YourIssuer",
+				Audience = "YourAudience",
+				SigningCredentials = creds 
+			};
+
+			var tokenHandler = new JwtSecurityTokenHandler();
+			var token = tokenHandler.CreateToken(tokenDescriptor);
+			return tokenHandler.WriteToken(token);
 		}
 		private bool ValidatePassword(string password, string hashPassword)
 		{
 			return BCrypt.Net.BCrypt.Verify(password, hashPassword);
 		}
 	}
-}
+	}

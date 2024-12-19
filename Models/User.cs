@@ -19,8 +19,10 @@ namespace BackendProject.Models
 		[Compare("Password",ErrorMessage = "password and confirmation password do not match.")]
 		public string? ConformPassword { get; set; }
 		public string? Role { get; set; }
-		public Cart? Cart { get; set; }
-
+		public virtual Cart? Cart { get; set; }
+		public	virtual List<WishList>? WishList { get; set; }
+		public virtual List<Order>? Orders { get; set; }
+		public ICollection<Address>? Addresses { get; set; }
 
 	}
 }

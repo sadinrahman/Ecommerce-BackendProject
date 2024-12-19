@@ -8,6 +8,6 @@ namespace BackendProject.Models
 		[Required]
 		public int UserId { get; set; }
 		public User? User { get; set; }
-		public ICollection<CartItems>? cartitems { get; set; }
+		public virtual ICollection<CartItems>? cartitems { get; set; }
 	}
 }
