@@ -39,6 +39,6 @@ namespace BackendProject.Models
 
 		public virtual User? User { get; set; }
 
-		public ICollection<Order> Orders { get; set; }
+		public ICollection<Order>? Orders { get; set; }
 	}
 }

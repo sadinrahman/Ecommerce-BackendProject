@@ -17,7 +17,7 @@ namespace BackendProject.Controllers
 			_services = services;
 		}
 		[HttpGet]
-		[Authorize(Roles = "Admin")]
+		[Authorize]
 		public async Task<IActionResult> GetProduct()
 		{
 			var products=await _services.GetAllProducts();
@@ -45,8 +45,8 @@ namespace BackendProject.Controllers
 			}
 			return Ok(products);
 		}
-		[HttpPost]
-		[Authorize]
+		[HttpPost("Admin")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> addProduct( AddProductDto addproduct)
 		{
 			if (addproduct == null)
@@ -60,7 +60,8 @@ namespace BackendProject.Controllers
 			}
 			return BadRequest();
 		}
-		[HttpDelete("{id}")]
+		[HttpDelete("{id}/admin")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> DeleteProduct(int id)
 		{
 			bool isdelete=await _services.DeleteProduct(id);
@@ -70,8 +71,8 @@ namespace BackendProject.Controllers
 			}
 			return NotFound("there is no product in this given id");
 		}
-		[HttpPut("Edit/{id}")]
-		
+		[HttpPut("Edit/{id}/admin")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> EditProduct(int id,AddProductDto addproduct)
 		{
 			bool update=await _services.EditProduct(id, addproduct);

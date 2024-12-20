@@ -1,4 +1,5 @@
 ﻿using BackendProject.AppdbContext;
+using BackendProject.Models;
 using BackendProject.Services.CartService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -32,6 +33,14 @@ namespace BackendProject.Controllers
 				return Ok("The product is added successfully");
 			}
 			return BadRequest("Invalid Product or the product is already in the cart");
+		}
+		[HttpGet]
+		[Authorize]
+		public async Task<IActionResult> GetCart()
+		{
+			int userid=  Convert.ToInt32(HttpContext.Items["UserId"]);
+			var cartitems= await _service.GetCart(userid);
+			return Ok(cartitems);
 		}
 
 	}

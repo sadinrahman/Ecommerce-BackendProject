@@ -7,10 +7,10 @@ namespace BackendProject.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class LoginController : ControllerBase
+	public class AuthController : ControllerBase
 	{
 		private readonly ILoginService _loginService;
-		public LoginController(ILoginService loginService)
+		public AuthController(ILoginService loginService)
 		{
 				_loginService = loginService;
 		}

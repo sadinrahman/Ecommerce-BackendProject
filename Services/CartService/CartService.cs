@@ -1,4 +1,6 @@
-﻿using BackendProject.AppdbContext;
+﻿using AutoMapper;
+using BackendProject.AppdbContext;
+using BackendProject.Dto;
 using BackendProject.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,10 +10,12 @@ namespace BackendProject.Services.CartService
 	{
 		private readonly AppDbContext _context;
 		private readonly ILogger<CartService> _logger;
-		public CartService(AppDbContext context,ILogger<CartService> logger)
+		private readonly IMapper _mapper;
+		public CartService(AppDbContext context,ILogger<CartService> logger,IMapper mapper)
 		{
-				_context = context;
+			_context = context;
 			_logger = logger;
+			_mapper = mapper;
 		}
 		public async Task<bool> AddToCart(int productId,int userid)
 		{
@@ -37,26 +41,28 @@ namespace BackendProject.Services.CartService
 					await _context.carts.AddAsync(isuser.Cart);
 					await _context.SaveChangesAsync();
 				}
-				var product = await _context.products.FirstOrDefaultAsync(p => p.ProductId == productId);
-				if (product?.stock <= 0)
+				if (isproduct?.stock <= 0)
 				{
 					return false;
 				}
 				var check= isuser.Cart?.cartitems?.FirstOrDefault(p=>p.ProductId==productId);
-				if(check != null)
+				if (check != null)
 				{
 					check.Quantity++;
 					await _context.SaveChangesAsync();
 
 				}
-				
-				var item = new CartItems
+				else
 				{
-					CartId = isuser.Cart.Id,
-					ProductId = productId,
-					Quantity = 1
-				};
-				isuser?.Cart?.cartitems?.Add(item);
+
+					var item = new CartItems
+					{
+						CartId = isuser.Cart.Id,
+						ProductId = productId,
+						Quantity = 1
+					};
+					isuser?.Cart?.cartitems?.Add(item);
+				}
 				await _context.SaveChangesAsync();
 				return true;
 				
@@ -70,6 +76,19 @@ namespace BackendProject.Services.CartService
 				return false;
 			}
 		}
-		
+		public async Task<List<CartViewDto>> GetCart(int userid)
+		{
+			if(userid == 0)
+			{
+				throw new Exception("Userid is null");
+			}
+			var user=await _context.carts.Include(c=>c.cartitems).ThenInclude(p=>p.Product).FirstOrDefaultAsync(x=>x.UserId==userid);
+			if (user != null)
+			{
+				return _mapper.Map<List<CartViewDto>>(user.cartitems);
+			}
+			return new List<CartViewDto>();
+		}
+
 	}
 }
