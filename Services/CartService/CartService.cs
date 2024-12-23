@@ -17,19 +17,19 @@ namespace BackendProject.Services.CartService
 			_logger = logger;
 			_mapper = mapper;
 		}
-		public async Task<bool> AddToCart(int productId,int userid)
+		public async Task<ApiResponses<CartItems>> AddToCart(int productId,int userid)
 		{
 			try
 			{
 				var isuser=await _context.users.Include(ci=>ci.Cart).ThenInclude(x=>x.cartitems).FirstOrDefaultAsync(x=>x.Id==userid);
 				if(isuser == null )
 				{
-					return false;
+					return new ApiResponses<CartItems>(404, "User not found");
 				}
 				var isproduct=await _context.products.FirstOrDefaultAsync(x=>x.ProductId==productId);
 				if(isproduct == null)
 				{
-					return false;
+					return new ApiResponses<CartItems>(404, "Product not found");
 				}
 				if (isuser.Cart == null)
 				{
@@ -43,7 +43,7 @@ namespace BackendProject.Services.CartService
 				}
 				if (isproduct?.stock <= 0)
 				{
-					return false;
+					return new ApiResponses<CartItems>(404, "Out of stock");
 				}
 				var check= isuser.Cart?.cartitems?.FirstOrDefault(p=>p.ProductId==productId);
 				if (check != null)
@@ -64,16 +64,17 @@ namespace BackendProject.Services.CartService
 					isuser?.Cart?.cartitems?.Add(item);
 				}
 				await _context.SaveChangesAsync();
-				return true;
-				
-			}catch (Exception ex)
+				return new ApiResponses<CartItems>(200, "Successfully added to cart");
+
+			}
+			catch (Exception ex)
 			{
 				_logger.LogError("Error adding to cart: " + ex.Message);
 				if (ex.InnerException != null)
 				{
 					_logger.LogError("Inner exception: " + ex.InnerException.Message);
 				}
-				return false;
+				return new ApiResponses<CartItems>(500, "Internal server error", null, ex.Message);
 			}
 		}
 		public async Task<List<CartViewDto>> GetCart(int userid)
@@ -82,12 +83,51 @@ namespace BackendProject.Services.CartService
 			{
 				throw new Exception("Userid is null");
 			}
-			var user=await _context.carts.Include(c=>c.cartitems).ThenInclude(p=>p.Product).FirstOrDefaultAsync(x=>x.UserId==userid);
-			if (user != null)
+			var cart=await _context.carts.Include(c=>c.cartitems).ThenInclude(p=>p.Product).FirstOrDefaultAsync(x=>x.UserId==userid);
+			if (cart != null)
 			{
-				return _mapper.Map<List<CartViewDto>>(user.cartitems);
+				var cartitem = cart.cartitems.Select(x => new CartViewDto
+				{
+					ProductId = x.ProductId,
+					ProductName = x.Product.Title,
+					Price = x.Product.Price,
+					Quantity = x.Quantity,
+					TotalAmount = x.Quantity * x.Product.Price,
+					Image = x.Product.Image
+
+				}).ToList();
+				return cartitem;
 			}
 			return new List<CartViewDto>();
+		}
+		public async Task<bool> RemoveFromCart(int userId, int productId)
+		{
+			try
+			{
+				var user = await _context.users.Include(c => c.Cart)
+									.ThenInclude(ci => ci.cartitems)
+									.ThenInclude(p => p.Product)
+									.FirstOrDefaultAsync(u => u.Id == userId);
+
+				if (user == null)
+				{
+					throw new Exception("User is not found");
+				}
+
+				var deleteItem = user?.Cart?.cartitems?.FirstOrDefault(p => p.ProductId == productId);
+				if (deleteItem == null)
+				{
+					return false;
+				}
+
+				user.Cart.cartitems.Remove(deleteItem);
+				await _context.SaveChangesAsync();
+				return true;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
 		}
 
 	}

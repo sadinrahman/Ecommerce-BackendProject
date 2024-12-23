@@ -38,5 +38,20 @@ namespace BackendProject.Services.CategoryServices
 			}
 			return _mapper.Map<List<CategoryViewDto>>(catagories);
 		}
+		public async Task<bool> RemoveCategory(int id)
+		{
+			var res = await _context.Category.FirstOrDefaultAsync(x => x.CategoryId == id);
+			if (res == null)
+			{
+				return false;
+			}
+			else
+			{
+				_context.Category.Remove(res);
+				await _context.SaveChangesAsync();
+				return true;
+			}
+		}
+
 	}
 }

@@ -38,8 +38,32 @@ namespace BackendProject.Controllers
 		[Authorize]
 		public async Task<IActionResult> GetCategory()
 		{
-			var categories = await _services.ViewCategory();
-			return Ok(categories);
+			try
+			{
+				var categories = await _services.ViewCategory();
+				return Ok(categories);
+			}catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+		[Authorize(Roles = "Admin")]
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> DeleteCategory(int id)
+		{
+			try
+			{
+				var res = await _services.RemoveCategory(id);
+				if (res)
+				{
+					return Ok("Category deleted succedully");
+				}
+				return NotFound("Category Not found");
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
 		}
 	}
 }

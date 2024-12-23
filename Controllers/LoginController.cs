@@ -15,7 +15,7 @@ namespace BackendProject.Controllers
 				_loginService = loginService;
 		}
 		[HttpPost("Login")]
-		public async  Task<IActionResult> Login([FromBody]  LoginDto loginDto)
+		public async  Task<IActionResult> Login([FromForm]  LoginDto loginDto)
 		{
 			var token=await _loginService.Login(loginDto);
 			if(token == null)

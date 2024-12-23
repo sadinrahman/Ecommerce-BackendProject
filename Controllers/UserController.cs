@@ -1,4 +1,6 @@
-﻿using BackendProject.Services.UserServices;
+﻿using BackendProject.Dto;
+using BackendProject.Models;
+using BackendProject.Services.UserServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +27,7 @@ namespace BackendProject.Controllers
 
 			}catch (Exception ex)
 			{
-				throw new Exception(ex.Message);
+				return StatusCode(500, ex.Message);
 			}
 		}
 		[HttpGet("{id}/admin")]
@@ -33,11 +35,11 @@ namespace BackendProject.Controllers
 		public async Task<IActionResult> GetUserById(int id)
 		{
 			var user= await _Services.GetUserById(id);
-			if(user == null)
-			{
-				return NotFound();
-			}
-			return Ok(user);
+			if (user == null)
+				return NotFound(new ApiResponses<string>(404, "User not found", null));
+
+			var res = new ApiResponses<UserViewDto>(200, "Fetched user by id", user);
+			return Ok(res);
 		}
 	}
 }

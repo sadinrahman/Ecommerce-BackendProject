@@ -75,6 +75,10 @@ namespace BackendProject.Controllers
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> EditProduct(int id,AddProductDto addproduct)
 		{
+			if (addProduct == null)
+			{
+				return BadRequest("Invalid product data.");
+			}
 			bool update=await _services.EditProduct(id, addproduct);
 			if (!update)
 			{

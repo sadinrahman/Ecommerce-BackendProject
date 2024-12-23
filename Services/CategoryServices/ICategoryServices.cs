@@ -6,5 +6,6 @@ namespace BackendProject.Services.CategoryServices
 	{
 		Task<bool> AddCategory(CategoryViewDto categoryViewDto);
 		Task<List<CategoryViewDto>> ViewCategory();
+		Task<bool> RemoveCategory(int id);
 	}
 }
