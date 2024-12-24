@@ -136,5 +136,39 @@ namespace BackendProject.Services.ProductServices
 				
 			}
 		}
+		public async Task<List<Productviewdto>> SearchProduct(string search)
+		{
+			if (string.IsNullOrEmpty(search))
+			{
+				return new List<Productviewdto> ();
+			}
+			var products = await _Context.products.Include(x => x.category)
+				.Where(p => p.Title.ToLower().Contains(search.ToLower()))
+				.ToListAsync();
+			return products.Select(s => new Productviewdto
+			{
+				Title = s.Title,
+				Description = s.Description,
+				Price = s.Price,
+				Image = s.Image,
+			}).ToList();
+		}
+		public async Task<List<Productviewdto>> PaginatedProduct(int pagenumber,int pagesize)
+		{
+			try
+			{	
+				var products=await _Context.products.Include (x => x.category).Skip((pagenumber-1)*pagesize).Take(pagesize).ToListAsync();
+				return products.Select(p => new Productviewdto
+				{
+					Title = p.Title,
+					Description = p.Description,
+					Price = p.Price,
+					Image = p.Image,
+				}).ToList();
+			}catch (Exception ex)
+			{
+				throw new Exception (ex.Message);
+			}
+		}
 	}
 }

@@ -10,5 +10,7 @@ namespace BackendProject.Services.ProductServices
 		Task<bool> AddProduct(AddProductDto addProductDto);
 		Task<bool> DeleteProduct(int id);
 		Task<bool> EditProduct(int id,AddProductDto editproduct);
+		Task<List<Productviewdto>> SearchProduct(string search);
+		Task<List<Productviewdto>> PaginatedProduct(int pagenumber, int pagesize);
 	}
 }

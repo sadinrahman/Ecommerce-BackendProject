@@ -66,7 +66,7 @@ namespace BackendProject.Controllers
 				bool res = await _service.RemoveFromCart(userId, productId);
 				if (res == false)
 				{
-					return BadRequest(new ApiResponses<string>(400, "Item is not found in cart", null, "Item is not found in cart"));
+					return BadRequest(new ApiResponses<string>(400, "Item is not found in cart", null));
 				}
 				return Ok(new ApiResponses<string>(200, "Item successfully deleted"));
 			}

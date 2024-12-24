@@ -86,5 +86,31 @@ namespace BackendProject.Controllers
 			}
 			return Ok("Product Updated successfully ");
 		}
+		[HttpGet("{search}")]
+		[Authorize]
+		public async Task<IActionResult> SearchProduct(string search)
+		{
+			try
+			{
+				var products= await _services.SearchProduct(search);
+				return Ok(products);
+			}catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+		[HttpGet("Paginated")]
+		[Authorize]
+		public async Task<IActionResult> Pagination([FromQuery] int pageNumber = 1, [FromQuery] int pagesize = 10)
+		{
+			try
+			{
+				var products =await _services.PaginatedProduct(pageNumber, pagesize);
+				return Ok(products);
+			}catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
 	}
 }
