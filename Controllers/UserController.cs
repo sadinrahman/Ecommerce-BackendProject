@@ -41,5 +41,18 @@ namespace BackendProject.Controllers
 			var res = new ApiResponses<UserViewDto>(200, "Fetched user by id", user);
 			return Ok(res);
 		}
+		[HttpPatch("{id}")]
+		[Authorize("Admin")]
+		public async Task<IActionResult> BlockorUnblock(int id)
+		{
+			try
+			{
+				bool isblocked =await _Services.Blockandunblock(id);
+				return Ok(isblocked);
+			}catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
 	}
 }

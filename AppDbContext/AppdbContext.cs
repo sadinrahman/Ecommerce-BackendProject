@@ -21,6 +21,9 @@ namespace BackendProject.AppdbContext
 			modelBuilder.Entity<User>()  
 				.Property(x => x.Role)
 				.HasDefaultValue("user");
+			modelBuilder.Entity<User>()
+				.Property(x => x.IsBlocked)
+				.HasDefaultValue("false");
 			modelBuilder.Entity<Category>()
 				.HasMany(x => x.products)
 				.WithOne(r => r.category)

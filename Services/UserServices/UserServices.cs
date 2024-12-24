@@ -2,6 +2,7 @@
 using BackendProject.AppdbContext;
 using BackendProject.Dto;
 using Microsoft.EntityFrameworkCore;
+using System.Formats.Asn1;
 
 namespace BackendProject.Services.UserServices
 {
@@ -39,6 +40,17 @@ namespace BackendProject.Services.UserServices
 				return null;
 			}
 			return _mapper.Map<UserViewDto>(user);
+		}
+		public async Task<bool> Blockandunblock(int userid)
+		{
+			var user= await _Context.users.SingleOrDefaultAsync(u=>u.Id == userid);
+			if(user == null)
+			{
+				return false;
+			}
+			user.IsBlocked = !user.IsBlocked;
+			await _Context.SaveChangesAsync();
+			return true;
 		}
 	}
 }

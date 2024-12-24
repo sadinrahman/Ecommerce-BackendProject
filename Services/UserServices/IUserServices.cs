@@ -6,5 +6,6 @@ namespace BackendProject.Services.UserServices
 	{
 		Task<List<UserViewDto>> AllUser();
 		Task<UserViewDto> GetUserById(int id);
+		Task<bool> Blockandunblock(int userid);
 	}
 }

@@ -71,6 +71,11 @@ namespace BackendProject.Services.LoginService
 					_logger.LogWarning("user not found");
 					return new resultDto { Error = "Not Found" };
 				}
+				if (usr.IsBlocked == true)
+				{
+					_logger.LogWarning("user is blocked");
+					return new resultDto { Error = "user is blocked" };
+				}
 
 				_logger.LogInformation("validating email...");
 				var pass = ValidatePassword(userdto.Password, usr.Password);
