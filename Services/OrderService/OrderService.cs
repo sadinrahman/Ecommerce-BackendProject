@@ -16,9 +16,18 @@ namespace BackendProject.Services.OrderService
 		public async Task<bool> CreateOrder(int userid, CreateOrderDto addorder)
 		{
 			var usercart = await _context.carts.Include(x => x.cartitems).ThenInclude(y => y.Product).FirstOrDefaultAsync(p => p.UserId == userid);
-			if (usercart == null || usercart.cartitems == null)
+			if (usercart == null || usercart.cartitems == null )
 			{
 				return false;
+			}
+			foreach( var item in usercart.cartitems)
+			{
+				var isproducts=await _context.products.FirstOrDefaultAsync(x=>x.ProductId==item.ProductId);
+				if (isproducts.stock < item.Quantity)
+				{
+					return false;
+				}
+				isproducts.stock -= item.Quantity;
 			}
 			decimal? totalAmount = usercart.cartitems
 								  .Where(item => item.Product != null)
@@ -44,36 +53,43 @@ namespace BackendProject.Services.OrderService
 			await _context.SaveChangesAsync();
 			return true;
 		}
-		public async Task<ApiResponses<OrderViewDto>> GetOrders(int userid)
+		public async Task<ApiResponses<List<OrderViewDto>>> GetOrders(int userid)
 		{
-			var userorder = await _context.Orders.Include(x => x.OrderItems).ThenInclude(i => i.Product).FirstOrDefaultAsync(x => x.UserId == userid);
-			if (userorder == null || userorder.OrderItems == null)
-			{
-				return new ApiResponses<OrderViewDto>(200, "Order List is Empty");
-			}
-			var resOrder = userorder.OrderItems.Select(item => new OrderItemDto
-			{
-				ProductName = item.Product.Title,
-				Quantity = item.Quantity,
-				TotalPrice = (item.Product.Price * item.Quantity)
+			
+			var userOrders = await _context.Orders
+							.Include(x => x.OrderItems)
+							.ThenInclude(x => x.Product)
+							.Where(x => x.UserId ==userid)
+							.ToListAsync();
 
+			var deliveryAddresses = await _context.Addresses
+				.Where(x => x.UserId == userid)
+				.ToListAsync();
+
+
+			var addressDict = deliveryAddresses
+				.GroupBy(addr => addr.UserId)
+				.ToDictionary(group => group.Key, group => group.FirstOrDefault());
+
+
+			var orderRes = userOrders.Select(order => new OrderViewDto
+			{
+				TransactionId = order.TransactionId,
+				TotalAmount=order.TotalAmount,
+				DeliveryAdrress = addressDict.TryGetValue(order.UserId, out var address)
+					? $" {address.HouseName}, {address.Pincode} {address.LandMark}, {address.Place}"
+					: "Address not found",
+				Phone = addressDict.TryGetValue(order.UserId, out var phoneAddress) ? phoneAddress.PhoneNumber : "Phone not available",
+				OrderDate = order.OrderDate,
+				Items = order.OrderItems.Select(orderItem => new OrderItemDto
+				{
+					ProductName = orderItem.Product.Title,
+					TotalPrice = orderItem.TotalPrice,
+					Quantity = orderItem.Quantity
+				}).ToList()
 			}).ToList();
-			decimal? totalAmount = userorder.OrderItems
-								  .Where(item => item.Product != null)
-								  .Sum(item => item.Product.Price * item.Quantity);
-			var orderaddress = await _context.Addresses.FirstOrDefaultAsync(x => x.AddressId == userorder.AddressId);
-			var res = new OrderViewDto
-			{
-				TransactionId = userorder.TransactionId,
-				TotalAmount = totalAmount,
-				DeliveryAdrress = $"{orderaddress.FullName},{orderaddress.Pincode} {orderaddress.HouseName},{orderaddress.Place},{orderaddress.PostOffice},{orderaddress.LandMark}",
-				Phone = orderaddress.PhoneNumber,
-				OrderDate = userorder.OrderDate,
-				Items = resOrder,
 
-
-			};
-			return new ApiResponses<OrderViewDto>(200, "Successfully Fetched User Cart", res);
+			return new ApiResponses<List<OrderViewDto>>(200, "Successfully Fetched User Orders", orderRes);
 
 		}
 

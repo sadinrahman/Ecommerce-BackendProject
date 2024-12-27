@@ -28,6 +28,7 @@ namespace BackendProject.Services.ProductServices
 						Title = x.Title,
 						Description = x.Description,
 						Price = x.Price,
+						stock=x.stock,
 						Image = x.Image
 					}).ToList();
 					return productall;
@@ -52,6 +53,7 @@ namespace BackendProject.Services.ProductServices
 					Title = products.Title,
 					Description = products.Description,
 					Price = products.Price,
+					stock = products.stock,
 					Image = products.Image
 				};
 
@@ -69,6 +71,7 @@ namespace BackendProject.Services.ProductServices
 					Title = x.Title,
 					Description = x.Description,
 					Price = x.Price,
+					stock=x.stock,
 					Image = x.Image
 						
 				}).ToListAsync();
