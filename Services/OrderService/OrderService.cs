@@ -76,5 +76,48 @@ namespace BackendProject.Services.OrderService
 			return new ApiResponses<OrderViewDto>(200, "Successfully Fetched User Cart", res);
 
 		}
+
+		public async Task<List<AdminViewOrderDto>> GetOrdersforAdmin(int userid)
+		{
+			var userorders=await _context.users.Include(c=>c.Orders).ThenInclude(n=>n.OrderItems).FirstOrDefaultAsync(o=>o.Id == userid);
+			if(userorders == null)
+			{
+				return null;
+			}
+			var result = userorders.Orders.Select(item => new AdminViewOrderDto
+			{
+				OrderId = item.Id,
+				TransactionId = item.TransactionId,
+				TotalAmount = item.TotalAmount,
+				OrderDate= item.OrderDate
+			}).ToList();
+			return result;
+		}
+
+
+
+
+		public async Task<int> TotalProductSold()
+		{
+			try
+			{
+				int sales = await _context.OrderItems.SumAsync(x => x.Quantity);
+				return sales;
+			}catch (Exception ex)
+			{
+				throw new Exception(ex.Message); 
+			}
+		}
+		public async Task<decimal?> TotalRevenue()
+		{
+			try
+			{
+				var total = await _context.OrderItems.SumAsync(x => x.TotalPrice);
+				return total;
+			}catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
 	}
 }

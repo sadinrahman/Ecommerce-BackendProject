@@ -7,5 +7,9 @@ namespace BackendProject.Services.OrderService
 	{
 		Task<bool> CreateOrder(int userid, CreateOrderDto addorder);
 		Task<ApiResponses<OrderViewDto>> GetOrders(int userid);
+		Task<List<AdminViewOrderDto>> GetOrdersforAdmin(int userid);
+		Task<int> TotalProductSold();
+		Task<decimal?> TotalRevenue();
+
 	}
 }

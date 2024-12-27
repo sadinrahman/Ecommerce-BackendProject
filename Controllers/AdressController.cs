@@ -16,7 +16,7 @@ namespace BackendProject.Controllers
 		{ 
 			_services = services;
 		}
-		[HttpPost("{Add address}")]
+		[HttpPost]
 		public async Task<IActionResult> CreateAddress([FromForm] createaddressdto address)
 		{
 			var userId = Convert.ToInt32(HttpContext.Items["UserId"]);
