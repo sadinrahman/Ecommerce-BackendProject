@@ -15,6 +15,8 @@ namespace BackendProject.Mapper
 			CreateMap<WishListDto, WishList>().ReverseMap();
 			CreateMap<Category, CategoryViewDto>().ReverseMap();
 			CreateMap<CartItems, CartViewDto>().ReverseMap();
+			CreateMap<Address,createaddressdto>().ReverseMap();
+			CreateMap<Address,ShowAddressDto>().ReverseMap();
 		}
 	}
 }

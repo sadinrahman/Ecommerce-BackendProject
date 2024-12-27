@@ -120,9 +120,45 @@ namespace BackendProject.Services.CartService
 					return false;
 				}
 
-				user.Cart.cartitems.Remove(deleteItem);
+				user?.Cart?.cartitems?.Remove(deleteItem);
 				await _context.SaveChangesAsync();
 				return true;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
+		public async Task<bool> Decreasequantity(int userid,int productid)
+		{
+			try
+			{
+				var user = await _context.users.Include(c => c.Cart)
+									.ThenInclude(ci => ci.cartitems)
+									.ThenInclude(p => p.Product)
+									.FirstOrDefaultAsync(u => u.Id == userid);
+				if(user == null)
+				{
+					throw new Exception("user not found");
+				}
+				var item=user?.Cart?.cartitems?.FirstOrDefault(p=>p.ProductId == productid);
+				if(item == null)
+				{
+					return false;
+
+				}
+				if (item.Quantity > 1)
+				{
+					item.Quantity--;
+
+				}
+				else
+				{
+					item.Quantity = 1;
+				}
+				await _context.SaveChangesAsync();
+				return true;
+
 			}
 			catch (Exception ex)
 			{

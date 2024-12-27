@@ -75,5 +75,24 @@ namespace BackendProject.Controllers
 				return StatusCode(500, new ApiResponses<string>(500, "Internal server error", null, ex.Message));
 			}
 		}
+		[HttpPut("DecreaseQuantity")]
+		[Authorize]
+		public async Task<IActionResult> DecreaseQuantity(int prductid)
+		{
+			try
+			{
+				int userid= Convert.ToInt32(HttpContext.Items["UserId"]);
+				bool items=await _service.Decreasequantity(userid, prductid);
+				if (items == false)
+				{
+					return BadRequest(new ApiResponses<string>(400, "Item not found in the cart", null, "Item not found in the cart"));
+				}
+				return Ok(new ApiResponses<string>(200, "Qty decreased"));
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
 	}
 }

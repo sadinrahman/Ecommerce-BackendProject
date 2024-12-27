@@ -16,8 +16,7 @@ namespace BackendProject.Models
 		 ErrorMessage = "Password must contain at least one letter, one number, and one special character.")]
 		public string? Password { get; set; }
 		
-		[Compare("Password",ErrorMessage = "password and confirmation password do not match.")]
-		public string? ConformPassword { get; set; }
+		
 		public string? Role { get; set; }
 		public bool IsBlocked { get; set; }
 		public virtual Cart? Cart { get; set; }

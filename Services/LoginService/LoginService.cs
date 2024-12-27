@@ -40,7 +40,6 @@ namespace BackendProject.Services.LoginService
 				newUser.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
 
 				var user = _mapper.Map<User>(newUser);
-				Console.WriteLine("hlo");
 				_context.users.Add(user);
 				await _context.SaveChangesAsync();
 				return true;
@@ -88,7 +87,7 @@ namespace BackendProject.Services.LoginService
 
 				_logger.LogInformation("generating token");
 				var token = GenerateToken(usr);
-				return new resultDto
+				return new resultDto 
 				{
 					Token = token,
 					Role = usr.Role,

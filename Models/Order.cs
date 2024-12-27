@@ -14,11 +14,8 @@ namespace BackendProject.Models
 		[Required]
 		public int AddressId { get; set; }
 		[Required]
-		public decimal TotalAmount { get; set; }
-		[Required]
-		public string? OrderStatus { get; set; }
-		[Required]
-		public string? OrderString { get; set; }
+		public decimal? TotalAmount { get; set; }
+		
 		[Required]
 		public string? TransactionId { get; set; }
 
