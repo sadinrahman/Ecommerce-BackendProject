@@ -47,13 +47,13 @@ namespace BackendProject.Controllers
 		}
 		[HttpPost("Admin")]
 		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> addProduct( AddProductDto addproduct)
+		public async Task<IActionResult> addProduct([FromForm] AddProductDto addproduct,IFormFile image)
 		{
 			if (addproduct == null)
 			{
 				return NotFound("There product is empty");
 			}
-			bool product=await _services.AddProduct(addproduct);
+			bool product=await _services.AddProduct(addproduct,image);
 			if (product)
 			{
 				return Ok("Product added successfully");
@@ -73,13 +73,13 @@ namespace BackendProject.Controllers
 		}
 		[HttpPut("Edit/{id}/admin")]
 		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> EditProduct(int id,AddProductDto addproduct)
+		public async Task<IActionResult> EditProduct(int id,[FromForm] AddProductDto addproduct, IFormFile image)
 		{
 			if (addProduct == null)
 			{
 				return BadRequest("Invalid product data.");
 			}
-			bool update=await _services.EditProduct(id, addproduct);
+			bool update=await _services.EditProduct(id, addproduct,image);
 			if (!update)
 			{
 				return BadRequest();

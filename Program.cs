@@ -4,6 +4,7 @@ using BackendProject.MiddleWare;
 using BackendProject.Services.AddressServices;
 using BackendProject.Services.CartService;
 using BackendProject.Services.CategoryServices;
+using BackendProject.Services.CloudinarySevice;
 using BackendProject.Services.LoginService;
 using BackendProject.Services.OrderService;
 using BackendProject.Services.ProductServices;
@@ -27,6 +28,7 @@ builder.Services.AddScoped<ICartService,CartService>();
 builder.Services.AddScoped<IWishListService, WishListService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAddressServices, AddressServices>();
+builder.Services.AddScoped<ICloudinarySevice, CloudinarySevice>();
 builder.Services.AddDbContext<AppDbContext>(Options=>
 Options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddAutoMapper(typeof(ProfileMapper));

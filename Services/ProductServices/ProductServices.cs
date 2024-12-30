@@ -2,6 +2,7 @@
 using BackendProject.AppdbContext;
 using BackendProject.Dto;
 using BackendProject.Models;
+using BackendProject.Services.CloudinarySevice;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +12,12 @@ namespace BackendProject.Services.ProductServices
 	{
 		private readonly AppDbContext _Context;
 		private readonly IMapper _mapper;
-		public ProductServices(AppDbContext context,IMapper mapper)
+		private readonly ICloudinarySevice _cloudinaryService;
+		public ProductServices(AppDbContext context,IMapper mapper, ICloudinarySevice cloudinaryService)
 		{
 			_Context = context;
 			_mapper = mapper;
+			_cloudinaryService = cloudinaryService;
 		}
 		public async  Task<List<Productviewdto>> GetAllProducts()
 		{
@@ -81,15 +84,28 @@ namespace BackendProject.Services.ProductServices
 			}
 			return products;
 		}
-		public async Task<bool> AddProduct( AddProductDto addProduct)
+		public async Task<bool> AddProduct( AddProductDto addProduct,IFormFile image)
 		{
 			try
 			{
-				var product = _mapper.Map<Product>(addProduct);
-				if(product == null)
+				
+				if(addProduct == null)
 				{
 					return false;
+				} 
+				var category=await _Context.Category.FirstOrDefaultAsync(x=>x.CategoryId== addProduct.CategoryId);
+				if(category == null)
+				{
+					throw new Exception("there is no  category in this id");
 				}
+				if (image == null)
+				{
+					throw new InvalidOperationException("Image is Not Uploaded");
+				}
+				
+				string imageUrl = await _cloudinaryService.UploadImage(image);
+				var product = _mapper.Map<Product>(addProduct);
+				product.Image = imageUrl;
 				await _Context.products.AddAsync(product);
 				await _Context.SaveChangesAsync();
 				return true;
@@ -110,7 +126,7 @@ namespace BackendProject.Services.ProductServices
 			await _Context.SaveChangesAsync();
 			return true;
 		}
-		public async Task<bool> EditProduct(int id,AddProductDto editproduct)
+		public async Task<bool> EditProduct(int id,AddProductDto editproduct, IFormFile image)
 		{
 			var exproduct= await _Context.products.FirstOrDefaultAsync(x=>x.ProductId==id);
 			var catexist=await _Context.Category.FirstOrDefaultAsync(x=>x.CategoryId==editproduct.CategoryId);
@@ -127,9 +143,13 @@ namespace BackendProject.Services.ProductServices
 				exproduct.Title = editproduct.Title;
 				exproduct.Description = editproduct.Description;
 				exproduct.Price = editproduct.Price;
-				exproduct.Image = editproduct.Image;
 				exproduct.stock = editproduct.stock;
 				exproduct.CategoryId = editproduct.CategoryId;
+				if (image != null && image.Length > 0)
+				{
+					string imageUrl = await _cloudinaryService.UploadImage(image);
+					exproduct.Image = imageUrl;
+				}
 				_Context.products.Update(exproduct);
 				await _Context.SaveChangesAsync();
 				return true;
