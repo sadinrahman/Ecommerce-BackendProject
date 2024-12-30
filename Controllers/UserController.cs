@@ -41,7 +41,7 @@ namespace BackendProject.Controllers
 			var res = new ApiResponses<UserViewDto>(200, "Fetched user by id", user);
 			return Ok(res);
 		}
-		[HttpPatch("{id}")]
+		[HttpPatch("{id}/blockunblock")]
 		[Authorize("Admin")]
 		public async Task<IActionResult> BlockorUnblock(int id)
 		{

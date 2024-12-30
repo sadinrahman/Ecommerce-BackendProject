@@ -89,5 +89,11 @@ namespace BackendProject.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
+		[HttpPatch("{orderid}")]
+		public async Task<IActionResult> UpdateStatus(int orderid,string status)
+		{
+			var statuses=await _service.UpdateOrderStatus(orderid, status);
+			return Ok(statuses);
+		}
 	}
 }

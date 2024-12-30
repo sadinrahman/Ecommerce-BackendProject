@@ -62,6 +62,9 @@ namespace BackendProject.AppdbContext
 				.HasOne(x=>x.User)
 				.WithMany(o=>o.Orders)
 				.HasForeignKey(e => e.UserId);
+			modelBuilder.Entity<Order>()
+				.Property(x => x.Status)
+				.HasDefaultValue("placed");
 			modelBuilder.Entity<OrderItems>()
 				.HasOne(p => p.Order)
 				.WithMany(c => c.OrderItems)

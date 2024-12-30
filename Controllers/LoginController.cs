@@ -25,7 +25,7 @@ namespace BackendProject.Controllers
 			return Ok(token);
 		}
 		[HttpPost("Register")]
-		public async Task<IActionResult> Register( RegisterDto  registerDto)
+		public async Task<IActionResult> Register([FromForm] RegisterDto  registerDto)
 		{
 			try
 			{

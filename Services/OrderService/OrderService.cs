@@ -117,7 +117,7 @@ namespace BackendProject.Services.OrderService
 		{
 			try
 			{
-				int sales = await _context.OrderItems.SumAsync(x => x.Quantity);
+				int sales = await _context.OrderItems.Where(oi => oi.Order.Status == "Delivered").SumAsync(x => x.Quantity);
 				return sales;
 			}catch (Exception ex)
 			{
@@ -128,12 +128,27 @@ namespace BackendProject.Services.OrderService
 		{
 			try
 			{
-				var total = await _context.OrderItems.SumAsync(x => x.TotalPrice);
+				var total = await _context.OrderItems.Where(oi => oi.Order.Status == "Delivered").SumAsync(x => x.TotalPrice);
 				return total;
 			}catch (Exception ex)
 			{
 				throw new Exception(ex.Message);
 			}
+		}
+		public async Task<ApiResponses<string>> UpdateOrderStatus(int orderId, string newStatus)
+		{
+			var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
+
+			if (order == null)
+			{
+				return new ApiResponses<string>(404, "Order not found.");
+			}
+
+			order.Status = newStatus;
+			_context.Orders.Update(order);
+			await _context.SaveChangesAsync();
+
+			return new ApiResponses<string>(200, "Order status updated successfully.");
 		}
 	}
 }

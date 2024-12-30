@@ -22,6 +22,7 @@ namespace BackendProject.Models
 		public virtual User? User { get; set; }
 		public virtual Address? Address { get; set; }
 		public virtual List<OrderItems>? OrderItems { get; set; }
-                                            
+		public string Status { get; set; } 
+
 	}
 }

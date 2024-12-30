@@ -10,6 +10,7 @@ namespace BackendProject.Services.OrderService
 		Task<List<AdminViewOrderDto>> GetOrdersforAdmin(int userid);
 		Task<int> TotalProductSold();
 		Task<decimal?> TotalRevenue();
+		Task<ApiResponses<string>> UpdateOrderStatus(int orderId, string newStatus);
 
 	}
 }
