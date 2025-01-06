@@ -20,7 +20,7 @@ namespace BackendProject.Controllers
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> GetAll()
 		{
-			try
+			try 
 			{
 				var users = await _Services.AllUser();
 				return Ok(users);

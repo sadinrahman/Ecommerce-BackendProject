@@ -38,7 +38,7 @@ namespace BackendProject.Controllers
 		[Authorize]
 		public async Task<IActionResult> GetProductBYCategory(string CategoryName)
 		{
-			var products=await _services.GetProductsByCategory(CategoryName);
+			var products=await _services.GetProductsByCategory(CategoryName); 
 			if (products == null || !products.Any())
 			{
 				return NotFound("No products found in this category.");
@@ -65,7 +65,7 @@ namespace BackendProject.Controllers
 		public async Task<IActionResult> DeleteProduct(int id)
 		{
 			bool isdelete=await _services.DeleteProduct(id);
-			if (isdelete)
+			if (isdelete) 
 			{
 				return Ok("deleted successfully");
 			}

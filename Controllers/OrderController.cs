@@ -90,10 +90,13 @@ namespace BackendProject.Controllers
 			}
 		}
 		[HttpPatch("{orderid}")]
+		[Authorize(Roles ="Admin")]
 		public async Task<IActionResult> UpdateStatus(int orderid,string status)
 		{
 			var statuses=await _service.UpdateOrderStatus(orderid, status);
 			return Ok(statuses);
 		}
+		
 	}
 }
+ 

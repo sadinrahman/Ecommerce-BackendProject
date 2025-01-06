@@ -47,8 +47,9 @@ namespace BackendProject.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
-		[Authorize(Roles = "Admin")]
+		
 		[HttpDelete("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> DeleteCategory(int id)
 		{
 			try

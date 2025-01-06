@@ -1,4 +1,5 @@
-﻿using BackendProject.AppdbContext;
+﻿using AutoMapper;
+using BackendProject.AppdbContext;
 using BackendProject.Dto;
 using BackendProject.Models;
 using Microsoft.EntityFrameworkCore;
@@ -9,9 +10,11 @@ namespace BackendProject.Services.OrderService
 	public class OrderService : IOrderService
 	{
 		private readonly AppDbContext _context;
-		public OrderService(AppDbContext context)
+		private readonly IMapper _mapper;
+		public OrderService(AppDbContext context,IMapper mapper)
 		{
 			_context = context;
+			_mapper = mapper;
 		}
 		public async Task<bool> CreateOrder(int userid, CreateOrderDto addorder)
 		{

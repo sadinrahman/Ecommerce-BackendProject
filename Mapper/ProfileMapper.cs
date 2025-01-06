@@ -17,6 +17,7 @@ namespace BackendProject.Mapper
 			CreateMap<CartItems, CartViewDto>().ReverseMap();
 			CreateMap<Address,createaddressdto>().ReverseMap();
 			CreateMap<Address,ShowAddressDto>().ReverseMap();
+			CreateMap<Order,OrderViewDto>().ReverseMap();
 		}
 	}
 }

@@ -62,6 +62,6 @@ namespace BackendProject.Controllers
 				return StatusCode(500, new ApiResponses<string>(500, "Failed to fetch wishlist", null, ex.Message));
 			}
 		}
-
+		 
 	}
 }

@@ -163,6 +163,9 @@ namespace BackendProject.Services.CartService
 			catch (Exception ex)
 			{
 				throw new Exception(ex.Message);
+
+
+
 			}
 		}
 
